@@ -1,4 +1,6 @@
+import { useFishFn } from "@actyx-contrib/react-pond";
 import React, { useEffect, useRef, useState } from "react";
+import { taskDeleted, taskEdited, taskStatus, taskDetailsFish } from "../model";
 
 
 function usePrevious(value) {
@@ -10,6 +12,9 @@ function usePrevious(value) {
 }
 
 export default function Todo(props) {
+  const task = useFishFn(taskDetailsFish, props.id);
+  const taskState = task === undefined ? {} : task.state;
+
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState('');
 
@@ -27,7 +32,7 @@ export default function Todo(props) {
     if (!newName.trim()) {
       return;
     }
-    props.editTask(props.id, newName);
+    task.run((state, enqueue) => enqueue(...taskEdited(state.id, newName)));
     setNewName("");
     setEditing(false);
   }
@@ -35,11 +40,11 @@ export default function Todo(props) {
   const editingTemplate = (
     <form className="stack-small" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label className="todo-label" htmlFor={props.id}>
-          New name for {props.name}
+        <label className="todo-label" htmlFor={taskState.id}>
+          New name for {taskState.name}
         </label>
         <input
-          id={props.id}
+          id={taskState.id}
           className="todo-text"
           type="text"
           value={newName}
@@ -55,11 +60,11 @@ export default function Todo(props) {
           onClick={() => setEditing(false)}
         >
           Cancel
-          <span className="visually-hidden">renaming {props.name}</span>
+          <span className="visually-hidden">renaming {taskState.name}</span>
         </button>
         <button type="submit" className="btn btn__primary todo-edit">
           Save
-          <span className="visually-hidden">new name for {props.name}</span>
+          <span className="visually-hidden">new name for {taskState.name}</span>
         </button>
       </div>
     </form>
@@ -69,13 +74,13 @@ export default function Todo(props) {
     <div className="stack-small">
       <div className="c-cb">
           <input
-            id={props.id}
+            id={taskState.id}
             type="checkbox"
-            defaultChecked={props.completed}
-            onChange={() => props.toggleTaskCompleted(props.id)}
+            checked={taskState.completed}
+            onChange={() => task.run((state, enqueue) => enqueue(...taskStatus(state.id, !state.completed)))}
           />
-          <label className="todo-label" htmlFor={props.id}>
-            {props.name}
+          <label className="todo-label" htmlFor={taskState.id}>
+            {taskState.name}
           </label>
         </div>
         <div className="btn-group">
@@ -85,14 +90,14 @@ export default function Todo(props) {
           onClick={() => setEditing(true)}
           ref={editButtonRef}
           >
-            Edit <span className="visually-hidden">{props.name}</span>
+            Edit <span className="visually-hidden">{taskState.name}</span>
           </button>
           <button
             type="button"
             className="btn btn__danger"
-            onClick={() => props.deleteTask(props.id)}
+            onClick={() => task.run((state, enqueue) => enqueue(...taskDeleted(state.id)))}
           >
-            Delete <span className="visually-hidden">{props.name}</span>
+            Delete <span className="visually-hidden">{taskState.name}</span>
           </button>
         </div>
     </div>
@@ -108,6 +113,9 @@ export default function Todo(props) {
     }
   }, [wasEditing, isEditing]);
 
+  if (task === undefined || !props.show(taskState)) {
+    return null
+  }
 
   return <li className="todo">{isEditing ? editingTemplate : viewTemplate}</li>;
 }

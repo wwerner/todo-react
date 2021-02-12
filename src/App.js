@@ -3,6 +3,8 @@ import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
 import { nanoid } from "nanoid";
+import { taskAdded, taskListFish } from "./model";
+import { useFish } from "@actyx-contrib/react-pond";
 
 
 function usePrevious(value) {
@@ -21,55 +23,12 @@ const FILTER_MAP = {
 
 const FILTER_NAMES = Object.keys(FILTER_MAP);
 
-function App(props) {
-  const [tasks, setTasks] = useState(props.tasks);
+function App() {
+  const tasks = useFish(taskListFish);
   const [filter, setFilter] = useState('All');
 
-  function toggleTaskCompleted(id) {
-    const updatedTasks = tasks.map(task => {
-      // if this task has the same ID as the edited task
-      if (id === task.id) {
-        // use object spread to make a new obkect
-        // whose `completed` prop has been inverted
-        return {...task, completed: !task.completed}
-      }
-      return task;
-    });
-    setTasks(updatedTasks);
-  }
-
-
-  function deleteTask(id) {
-    const remainingTasks = tasks.filter(task => id !== task.id);
-    setTasks(remainingTasks);
-  }
-
-
-  function editTask(id, newName) {
-    const editedTaskList = tasks.map(task => {
-    // if this task has the same ID as the edited task
-      if (id === task.id) {
-        //
-        return {...task, name: newName}
-      }
-      return task;
-    });
-    setTasks(editedTaskList);
-  }
-
-  const taskList = tasks
-  .filter(FILTER_MAP[filter])
-  .map(task => (
-    <Todo
-      id={task.id}
-      name={task.name}
-      completed={task.completed}
-      key={task.id}
-      toggleTaskCompleted={toggleTaskCompleted}
-      deleteTask={deleteTask}
-      editTask={editTask}
-    />
-  ));
+  // all task operations are handled by the Todo component in this demo
+  const taskList = tasks.state.map(task => <Todo id={task} key={task} show={FILTER_MAP[filter]} />);
 
   const filterList = FILTER_NAMES.map(name => (
     <FilterButton
@@ -81,10 +40,9 @@ function App(props) {
   ));
 
   function addTask(name) {
-    const newTask = { id: "todo-" + nanoid(), name: name, completed: false };
-    setTasks([...tasks, newTask]);
+    // state could be used to check whether the task already exists
+    tasks.run((_state, enqueue) => enqueue(...taskAdded("todo-" + nanoid(), name)));
   }
-
 
   const tasksNoun = taskList.length !== 1 ? 'tasks' : 'task';
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
