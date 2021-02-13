@@ -1,76 +1,89 @@
-# todo-react
-Sample todo app built with the React/ReactDOM framework. For the accompanying documentation, see 
-[Understanding client-side JavaScript frameworks
-: React tutorials](https://wiki.developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks#React_tutorials).
+# todo-react with local-first cooperation
 
-For the live version, see https://mdn.github.io/todo-react-build/.
+_(This is a fork from `mdn`, see there for the [React-focused README](https://github.com/mdn/todo-react/blob/master/README.md))_
 
+**Demonstration of peer-to-peer collaborative editing!**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This adaptation of the classic TODO list example demonstrates [local-first cooperation](https://local-first-cooperation.github.io/website/) using [ActyxOS](https://developer.actyx.com/).
+The idea is that persistence and business logic are **executed locally**, based on events stored in ActyxOS.
+Multiple nodes in the same network will find each other using mDNS, making the TODO list **collaborative**.
 
-## Available Scripts
+You are very welcome to check out [this pull request](https://github.com/actyx-contrib/todo-react/pull/1/files) to convince yourself that this is neither daunting nor magical — it is an application of [event sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) to distributed peer-to-peer applications.
 
-In the project directory, you can run:
+## Trying it out
 
-### `yarn start`
+After cloning this repository, do the following inside the new directory (you’ll need at least node.js 10):
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+npm install --global yarn
+yarn install
+```
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+### Start ActyxOS
 
-### `yarn test`
+Before starting the app, you’ll need to have ActyxOS running, so get it from [downloads.actyx.com](https://downloads.actyx.com/).
+Please use a non-Docker version because zero-configuration peer discovery is not supported by Docker.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+On **Windows**, it suffices to run the installer, it should start `ActyxOS.exe`.
 
-### `yarn build`
+On **Mac or Linux**, you’ll need to make the downloaded binary executable and start it;
+since it will store some data in its current working directory, you may want to do this from this project’s folder.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+For **Android** please download the latest version from [downloads.actyx.com](https://downloads.actyx.com/) and install with `adb install actyxos.apk`, then start the ActyxOS app on your phone or tablet.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+### Start the app
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Now you can start the app:
 
-### `yarn eject`
+```bash
+yarn start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+For Android, it is easiest to serve the web app from your computer and open it in the browser of your tablet or phone:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+yarn build
+yarn global add serve
+serve -s build
+# note down the external IP:port of your computer from the above output
+adb shell am start -a android.intent.action.VIEW -d http://<IP:port>
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+This should open a browser tab in which — after a few seconds of [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html) magic — you’ll see an empty TODO list.
+Don’t be shy, try it out!
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### ‼️ Automatic synchronisation between nodes ‼️
 
-## Learn More
+The real deal is to use another computer or tablet in the same network:
+Once you start ActyxOS and the app there, you should see both screens synchronised (it may take a few seconds at first while ActyxOS uses mDNS to find other nodes).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+This communication is all purely local, no cloud services or relays are involved. You can try disabling network connections (e.g. by switching off wifi), making modifications, then switching the wifi back on and violà: data will be synchronised!
+(It may take up to 30sec for the synchronisation to resume, since by default ActyxOS announces its synchronisation state only at that interval.)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## If the two nodes don’t sync
 
-### Code Splitting
+Depending on your network setup, it may not be possible for the ActyxOS nodes to discover each other.
+Due to how containers work, this will always be a problem in Docker, lxc, etc.
+In these cases, you need to pick one node that is reachable via TCP/IP from all your nodes and configure that as a bootstrap node (in a production environment you’d use multiple of those).
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+There is [a guide describing this](https://developer.actyx.com/docs/os/advanced-guides/actyxos-bootstrap-node), for which you’ll need the swarm key of your nodes.
+This is a default key in the above setup, but in any case you can get it using
 
-### Analyzing the Bundle Size
+```bash
+ax settings get -l com.actyx.os/general/swarmKey localhost
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+Alternatively, you can reuse an existing non-Docker ActyxOS node as bootstrap node and tell all Docker-based nodes about it:
 
-### Making a Progressive Web App
+```bash
+ax settings set -l com.actyx.os/general/bootstrapNodes '["/ip4/<IP>/tcp/4001"]' localhost
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+If you want to watch how ActyxOS does its thing:
 
-### Advanced Configuration
+```bash
+ax settings set -l com.actyx.os/general/logLevels/os DEBUG localhost
+ax logs tail -f -l localhost
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+_(You can also replace `localhost` in any of the above with the IP of another ActyxOS node, e.g. your tablet, to perform remote management.)_
