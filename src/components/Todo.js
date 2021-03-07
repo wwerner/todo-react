@@ -80,7 +80,7 @@ export default function Todo(props) {
             onChange={() => task.run((state, enqueue) => enqueue(...taskStatus(state.id, !state.completed)))}
           />
           <label className="todo-label" htmlFor={taskState.id}>
-            {taskState.name}
+            {taskState.name} {taskState.creator ? `(by ${taskState.creator})` : '' }
           </label>
         </div>
         <div className="btn-group">

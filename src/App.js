@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Form from "./components/Form";
+import UserForm from "./components/UserForm";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
 import { nanoid } from "nanoid";
@@ -26,6 +27,7 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
 function App() {
   const tasks = useFish(taskListFish);
   const [filter, setFilter] = useState('All');
+  const [user, setUser] = useState('');
 
   // all task operations are handled by the Todo component in this demo
   const taskList = tasks.state.map(task => <Todo id={task} key={task} show={FILTER_MAP[filter]} />);
@@ -39,9 +41,9 @@ function App() {
     />
   ));
 
-  function addTask(name) {
+  function addTask(task) {
     // state could be used to check whether the task already exists
-    tasks.run((_state, enqueue) => enqueue(...taskAdded("todo-" + nanoid(), name)));
+    tasks.run((_state, enqueue) => enqueue(...taskAdded("todo-" + nanoid(), task, user)));
   }
 
   const tasksNoun = taskList.length !== 1 ? 'tasks' : 'task';
@@ -58,6 +60,7 @@ function App() {
 
   return (
     <div className="todoapp stack-large">
+      <UserForm setUser={setUser} />
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">
         {filterList}

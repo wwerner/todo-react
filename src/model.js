@@ -6,18 +6,20 @@ export const taskEdited = (id, name) => [
     {
         type: 'taskEdited',
         id,
-        name
+        name,
     }
 ]
 
-export const taskAdded = (id, name) => [
+export const taskAdded = (id, name, creator, assignee) => [
     // currently tags also double for indexing, here to mark relevance for taskList
     // (future ActyxOS versions will have better indexing capabilities)
     Tags(`task:${id}`, 'task-list'),
     {
         type: 'taskAdded',
         id,
-        name
+        name,
+        creator,
+        assignee
     }
 ]
 
@@ -67,6 +69,7 @@ export const taskDetailsFish = (id) => ({
         switch (event.type) {
             case 'taskAdded':
                 state.name = event.name
+                state.creator = event.creator
                 break
             case 'taskEdited':
                 state.name = event.name
