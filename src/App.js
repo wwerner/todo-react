@@ -16,15 +16,17 @@ function usePrevious(value) {
   return ref.current;
 }
 
-const FILTER_MAP = {
-  All: () => true,
-  Active: task => !task.completed,
-  Completed: task => task.completed
-};
-
-const FILTER_NAMES = Object.keys(FILTER_MAP);
-
 function App() {
+
+  const FILTER_MAP = {
+    All: () => true,
+    Active: task => !task.completed,
+    Completed: task => task.completed,
+    Mine: task => task.assignee === user
+  };
+  
+  const FILTER_NAMES = Object.keys(FILTER_MAP);
+  
   const tasks = useFish(taskListFish);
   const users = useFish(userListFish);
   const [filter, setFilter] = useState('All');
