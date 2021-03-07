@@ -312,4 +312,12 @@ body {
 
 .todo-meta > * {
   flex: 1 1 49%;
+  border: 1px solid lightgray;
+  margin-right: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.todo-meta > *:last-child {
+  margin-right: 0rem;
 }
