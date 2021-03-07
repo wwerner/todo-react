@@ -34,13 +34,14 @@ export const taskDeleted = (id) => [
     }
 ]
 
-export const taskStatus = (id, completed) => [
+export const taskStatus = (id, completed, resolver) => [
     Tags(`task:${id}`),
     {
         type: 'taskStatus',
         // events are self-contained facts, which is why the ID is here — who knows which future code will need it?
         id,
-        completed
+        completed,
+        resolver
     }
 ]
 
@@ -80,6 +81,7 @@ export const taskDetailsFish = (id) => ({
                 break
             case 'taskStatus':
                 state.completed = event.completed
+                state.resolver = event.completed ? event.resolver : undefined
                 break
             default:
         }

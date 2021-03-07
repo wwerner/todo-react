@@ -77,7 +77,7 @@ export default function Todo(props) {
           id={taskState.id}
           type="checkbox"
           checked={taskState.completed}
-          onChange={() => task.run((state, enqueue) => enqueue(...taskStatus(state.id, !state.completed)))}
+          onChange={() => task.run((state, enqueue) => enqueue(...taskStatus(state.id, !state.completed, props.currentUser)))}
         />
         <label className="todo-label" htmlFor={taskState.id}>
           {taskState.name}
@@ -87,6 +87,7 @@ export default function Todo(props) {
       <div className="todo-meta">
           {taskState.creator ? (<div>Created by {taskState.creator}</div>) : ''}
           {taskState.assignee ? (<div>Assigned to {taskState.assignee}</div>) : ''}
+          {taskState.resolver ? (<div>Reolved by {taskState.resolver}</div>) : ''}
       </div>
 
       <div className="btn-group">

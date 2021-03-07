@@ -31,7 +31,7 @@ function App() {
   const [user, setUser] = useState('');
 
   // all task operations are handled by the Todo component in this demo
-  const taskList = tasks.state.map(task => <Todo id={task} key={task} show={FILTER_MAP[filter]} />);
+  const taskList = tasks.state.map(task => <Todo id={task} key={task} show={FILTER_MAP[filter]} currentUser={user}/>);
 
   const filterList = FILTER_NAMES.map(name => (
     <FilterButton
