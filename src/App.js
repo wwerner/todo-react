@@ -21,8 +21,8 @@ function App() {
   const FILTER_MAP = {
     All: () => true,
     Active: task => !task.completed,
-    Completed: task => task.completed,
-    Mine: task => task.assignee === user
+    Mine: task => task.assignee === user,
+    Completed: task => task.completed
   };
   
   const FILTER_NAMES = Object.keys(FILTER_MAP);
