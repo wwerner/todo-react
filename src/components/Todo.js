@@ -86,8 +86,8 @@ export default function Todo(props) {
 
       <div className="todo-meta">
           {taskState.creator ? (<div>Created by {taskState.creator}</div>) : ''}
-          {taskState.assignee ? (<div>Assigned to {taskState.assignee}</div>) : ''}
-          {taskState.resolver ? (<div>Reolved by {taskState.resolver}</div>) : ''}
+          {taskState.assignee ? (<div>Assigned to {taskState.assignee}</div>) : (<i>unassigned</i>)}
+          {taskState.resolver ? (<div>Resolved by {taskState.resolver}</div>) : (<i>unresolved</i>)}
       </div>
 
       <div className="btn-group">
