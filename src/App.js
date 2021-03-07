@@ -17,6 +17,10 @@ function usePrevious(value) {
 }
 
 function App() {
+  const tasks = useFish(taskListFish);
+  const users = useFish(userListFish);
+  const [filter, setFilter] = useState('All');
+  const [user, setUser] = useState('');
 
   const FILTER_MAP = {
     All: () => true,
@@ -27,11 +31,6 @@ function App() {
   
   const FILTER_NAMES = Object.keys(FILTER_MAP);
   
-  const tasks = useFish(taskListFish);
-  const users = useFish(userListFish);
-  const [filter, setFilter] = useState('All');
-  const [user, setUser] = useState('');
-
   // all task operations are handled by the Todo component in this demo
   const taskList = tasks.state.map(task => <Todo id={task} key={task} show={FILTER_MAP[filter]} currentUser={user}/>);
 
