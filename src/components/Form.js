@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 function Form(props) {
   const [name, setName] = useState('');
-
+  const [assignee, setAssignee] = useState('');
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -11,11 +11,16 @@ function Form(props) {
     }
     props.addTask(name);
     setName("");
+    setAssignee("")
   }
 
 
-  function handleChange(e) {
+  function handleTextChange(e) {
     setName(e.target.value);
+  }
+
+  function handleAssigneeChange(e) {
+    setAssignee(e.target.value);
   }
 
   return (
@@ -33,8 +38,17 @@ function Form(props) {
         name="text"
         autoComplete="off"
         value={name}
-        onChange={handleChange}
+        onChange={handleTextChange}
       />
+       <select
+        type="text"
+        id="new-todo-asignee-select"
+        className="input input__lg"
+        name="user"
+        onChange={handleAssigneeChange}
+      >
+        {Array.from(props.users).map(u => (<option key={u}>{u}</option>))}
+      </select>
       <button type="submit" className="btn btn__primary btn__lg">
         Add
       </button>
