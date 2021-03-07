@@ -29,10 +29,9 @@ function App() {
   const users = useFish(userListFish);
   const [filter, setFilter] = useState('All');
   const [user, setUser] = useState('');
-  const [knownUsers, setKnownUsers] = useState(new Set())
 
   // all task operations are handled by the Todo component in this demo
-  const taskList = tasks.state.map(task => <Todo id={task} key={task} show={FILTER_MAP[filter]}/>);
+  const taskList = tasks.state.map(task => <Todo id={task} key={task} show={FILTER_MAP[filter]} />);
 
   const filterList = FILTER_NAMES.map(name => (
     <FilterButton
@@ -49,6 +48,7 @@ function App() {
   }
 
   function addUser(name) {
+    setUser(name)
     tasks.run((_state, enqueue) => enqueue(...userAdded(name)));
   }
 
@@ -64,15 +64,10 @@ function App() {
     }
   }, [tasks.length, prevTaskLength]);
 
-  useEffect(() => {
-    if(!user.trim()) return
-    setKnownUsers(s => new Set(s.add(user)))
-  }, [user])
-
   return (
     <div className="todoapp stack-large">
       <UserForm setUser={addUser} />
-      <Form addTask={addTask} users={users}/>
+      <Form addTask={addTask} users={users} />
       <div className="filters btn-group stack-exception">
         {filterList}
       </div>

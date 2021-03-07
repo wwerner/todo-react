@@ -10,7 +10,9 @@ export const taskEdited = (id, name) => [
     }
 ]
 
-export const taskAdded = (id, name, creator, assignee) => [
+export const taskAdded = (id, name, creator, assignee) => {
+    console.log('XX',id, name, creator, assignee)
+ return   [
     // currently tags also double for indexing, here to mark relevance for taskList
     // (future ActyxOS versions will have better indexing capabilities)
     Tags(`task:${id}`, 'task-list'),
@@ -22,6 +24,7 @@ export const taskAdded = (id, name, creator, assignee) => [
         assignee
     }
 ]
+}
 
 export const taskDeleted = (id) => [
     Tags(`task:${id}`, 'task-list'),

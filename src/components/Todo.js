@@ -73,35 +73,39 @@ export default function Todo(props) {
   const viewTemplate = (
     <div className="stack-small">
       <div className="c-cb">
-          <input
-            id={taskState.id}
-            type="checkbox"
-            checked={taskState.completed}
-            onChange={() => task.run((state, enqueue) => enqueue(...taskStatus(state.id, !state.completed)))}
-          />
-          <label className="todo-label" htmlFor={taskState.id}>
-            {taskState.name} 
-            {taskState.creator ? `(by ${taskState.creator})` : '' }
-            {taskState.assignee ? `assigned to ${taskState.assignee}` : '' }
-          </label>
-        </div>
-        <div className="btn-group">
+        <input
+          id={taskState.id}
+          type="checkbox"
+          checked={taskState.completed}
+          onChange={() => task.run((state, enqueue) => enqueue(...taskStatus(state.id, !state.completed)))}
+        />
+        <label className="todo-label" htmlFor={taskState.id}>
+          {taskState.name}
+        </label>
+      </div>
+
+      <div className="todo-meta">
+          {taskState.creator ? (<div>Created by {taskState.creator}</div>) : ''}
+          {taskState.assignee ? (<div>Assigned to {taskState.assignee}</div>) : ''}
+      </div>
+
+      <div className="btn-group">
         <button
           type="button"
           className="btn"
           onClick={() => setEditing(true)}
           ref={editButtonRef}
-          >
-            Edit <span className="visually-hidden">{taskState.name}</span>
-          </button>
-          <button
-            type="button"
-            className="btn btn__danger"
-            onClick={() => task.run((state, enqueue) => enqueue(...taskDeleted(state.id)))}
-          >
-            Delete <span className="visually-hidden">{taskState.name}</span>
-          </button>
-        </div>
+        >
+          Edit <span className="visually-hidden">{taskState.name}</span>
+        </button>
+        <button
+          type="button"
+          className="btn btn__danger"
+          onClick={() => task.run((state, enqueue) => enqueue(...taskDeleted(state.id)))}
+        >
+          Delete <span className="visually-hidden">{taskState.name}</span>
+        </button>
+      </div>
     </div>
   );
 

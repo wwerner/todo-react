@@ -304,3 +304,12 @@ body {
   text-align: center;
   line-height: 200%;
 }
+
+.todo-meta {
+  display: flex;
+  font-size: 1.6rem ;
+}
+
+.todo-meta > * {
+  flex: 1 1 49%;
+}

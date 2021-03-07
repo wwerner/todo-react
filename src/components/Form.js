@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Form(props) {
   const [name, setName] = useState('');
@@ -9,21 +9,22 @@ function Form(props) {
     if (!name.trim()) {
       return;
     }
-    console.log(name, assignee)
 
     props.addTask(name, assignee);
     setName("");
-    setAssignee("")
   }
-
 
   function handleTextChange(e) {
     setName(e.target.value);
   }
 
   function handleAssigneeChange(e) {
-    setAssignee(e.target.selected);
+    setAssignee(e.target.value);
   }
+
+  useEffect(() => {
+    setAssignee(props.users.state[0])
+  }, [props.users.state])
 
   return (
     <form onSubmit={handleSubmit}>
@@ -42,12 +43,13 @@ function Form(props) {
         value={name}
         onChange={handleTextChange}
       />
-       <select
+      <select
         type="text"
         id="new-todo-assignee-select"
         className="input input__lg"
         name="assignee"
         onChange={handleAssigneeChange}
+        value={assignee}
       >
         {props.users.state.map(u => (<option key={u}>{u}</option>))}
       </select>
