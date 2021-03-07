@@ -70,6 +70,7 @@ export const taskDetailsFish = (id) => ({
             case 'taskAdded':
                 state.name = event.name
                 state.creator = event.creator
+                state.assignee = event.assignee
                 break
             case 'taskEdited':
                 state.name = event.name
@@ -82,3 +83,31 @@ export const taskDetailsFish = (id) => ({
         return state
     }
 })
+
+export const userAdded = (name) => [
+    // currently tags also double for indexing, here to mark relevance for taskList
+    // (future ActyxOS versions will have better indexing capabilities)
+    Tags(`user:${name}`, 'user-list'),
+    {
+        type: 'userAdded',
+        name,
+    }
+]
+
+
+export const userListFish = {
+    fishId: FishId.of('usersList', 'singleton', 0),
+    initialState: [],
+    where: Tag('user-list'),
+    onEvent: (state, event, _meta) => {
+        switch (event.type) {
+            case 'userAdded':
+                if (state.indexOf(event.name) === -1) {
+                    state.push(event.name)
+                }
+                break
+            default:
+        }
+        return state
+    }
+}

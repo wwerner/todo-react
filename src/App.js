@@ -4,7 +4,7 @@ import UserForm from "./components/UserForm";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
 import { nanoid } from "nanoid";
-import { taskAdded, taskListFish } from "./model";
+import { taskAdded, taskListFish, userAdded, userListFish } from "./model";
 import { useFish } from "@actyx-contrib/react-pond";
 
 
@@ -26,6 +26,7 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 function App() {
   const tasks = useFish(taskListFish);
+  const users = useFish(userListFish);
   const [filter, setFilter] = useState('All');
   const [user, setUser] = useState('');
   const [knownUsers, setKnownUsers] = useState(new Set())
@@ -42,9 +43,13 @@ function App() {
     />
   ));
 
-  function addTask(task) {
+  function addTask(task, assignee) {
     // state could be used to check whether the task already exists
-    tasks.run((_state, enqueue) => enqueue(...taskAdded("todo-" + nanoid(), task, user)));
+    tasks.run((_state, enqueue) => enqueue(...taskAdded("todo-" + nanoid(), task, user, assignee)));
+  }
+
+  function addUser(name) {
+    tasks.run((_state, enqueue) => enqueue(...userAdded(name)));
   }
 
   const tasksNoun = taskList.length !== 1 ? 'tasks' : 'task';
@@ -66,8 +71,8 @@ function App() {
 
   return (
     <div className="todoapp stack-large">
-      <UserForm setUser={setUser} />
-      <Form addTask={addTask} users={knownUsers}/>
+      <UserForm setUser={addUser} />
+      <Form addTask={addTask} users={users}/>
       <div className="filters btn-group stack-exception">
         {filterList}
       </div>

@@ -9,7 +9,9 @@ function Form(props) {
     if (!name.trim()) {
       return;
     }
-    props.addTask(name);
+    console.log(name, assignee)
+
+    props.addTask(name, assignee);
     setName("");
     setAssignee("")
   }
@@ -20,7 +22,7 @@ function Form(props) {
   }
 
   function handleAssigneeChange(e) {
-    setAssignee(e.target.value);
+    setAssignee(e.target.selected);
   }
 
   return (
@@ -42,12 +44,12 @@ function Form(props) {
       />
        <select
         type="text"
-        id="new-todo-asignee-select"
+        id="new-todo-assignee-select"
         className="input input__lg"
-        name="user"
+        name="assignee"
         onChange={handleAssigneeChange}
       >
-        {Array.from(props.users).map(u => (<option key={u}>{u}</option>))}
+        {props.users.state.map(u => (<option key={u}>{u}</option>))}
       </select>
       <button type="submit" className="btn btn__primary btn__lg">
         Add
