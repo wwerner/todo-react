@@ -48,7 +48,7 @@ function App() {
     tasks.run((_state, enqueue) => enqueue(...taskAdded("todo-" + nanoid(), task, user, assignee)));
   }
 
-  function addUser(name) {
+  function setAndRegisterUser(name) {
     setUser(name)
     tasks.run((_state, enqueue) => enqueue(...userAdded(name)));
   }
@@ -67,7 +67,7 @@ function App() {
 
   return (
     <div className="todoapp stack-large">
-      <UserForm setUser={addUser} />
+      <UserForm setUser={setAndRegisterUser} />
       <Form addTask={addTask} users={users} />
       <div className="filters btn-group stack-exception">
         {filterList}
