@@ -50,7 +50,9 @@ function App() {
 
   function setAndRegisterUser(name) {
     setUser(name)
-    tasks.run((_state, enqueue) => enqueue(...userAdded(name)));
+    if(users.state.indexOf(name) === -1) {
+      users.run((_state, enqueue) => enqueue(...userAdded(name)));
+    }
   }
 
   const tasksNoun = taskList.length !== 1 ? 'tasks' : 'task';
